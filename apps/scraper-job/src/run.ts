@@ -15,8 +15,34 @@ import { loadConfig } from "./loadConfig.js";
 type RunOptions = {
   configPath: string;
   dryRun: boolean;
+  logParsedJobs?: boolean;
+  logMatchedJobs?: boolean;
   logger?: Logger;
 };
+
+function resolveCompanySourceUrl(company: Awaited<ReturnType<typeof loadConfig>>["companies"][number]): string {
+  if (
+    company.parser === "greenhouse" &&
+    typeof company.sourceMetadata?.greenhouseBoardToken === "string"
+  ) {
+    return `https://job-boards.greenhouse.io/${company.sourceMetadata.greenhouseBoardToken}`;
+  }
+
+  return company.careersUrl;
+}
+
+function serializeJob(job: JobPosting): Record<string, string | undefined> {
+  return {
+    companyId: job.companyId,
+    companyName: job.companyName,
+    title: job.title,
+    location: job.location,
+    url: job.url,
+    canonicalUrl: job.canonicalUrl ?? job.url,
+    sourceJobId: job.sourceJobId,
+    fingerprint: buildJobFingerprint(job)
+  };
+}
 
 function createJsonLogger(): Logger {
   return {
@@ -63,7 +89,8 @@ export async function runCareerScout(options: RunOptions): Promise<void> {
 
   for (const company of enabledCompanies) {
     try {
-      const response = await fetch(company.careersUrl);
+      const sourceUrl = resolveCompanySourceUrl(company);
+      const response = await fetch(sourceUrl);
 
       if (!response.ok) {
         fetchFailures += 1;
@@ -71,7 +98,8 @@ export async function runCareerScout(options: RunOptions): Promise<void> {
           companyId: company.id,
           parser: company.parser,
           status: response.status,
-          url: company.careersUrl
+          careersUrl: company.careersUrl,
+          sourceUrl
         });
         continue;
       }
@@ -87,7 +115,7 @@ export async function runCareerScout(options: RunOptions): Promise<void> {
         parsedJobs = await parser.parse({
           company,
           html,
-          sourceUrl: company.careersUrl
+          sourceUrl
         });
       } catch (error) {
         parserFailures += 1;
@@ -103,6 +131,34 @@ export async function runCareerScout(options: RunOptions): Promise<void> {
 
       const filteredJobs = filterJobPostings(parsedJobs, company);
       jobsMatched += filteredJobs.length;
+
+      logger.info("company_processed", {
+        companyId: company.id,
+        parser: company.parser,
+        careersUrl: company.careersUrl,
+        sourceUrl,
+        parsedJobsCount: parsedJobs.length,
+        matchedJobsCount: filteredJobs.length
+      });
+
+      if (options.logParsedJobs) {
+        logger.info("parsed_jobs", {
+          companyId: company.id,
+          parsedJobsCount: parsedJobs.length,
+          parsedJobs: parsedJobs.map(serializeJob)
+        });
+      }
+
+      if (options.logMatchedJobs) {
+        logger.info("matched_jobs", {
+          companyId: company.id,
+          matchedJobsCount: filteredJobs.length,
+          matchedJobs: filteredJobs.map((result) => ({
+            ...serializeJob(result.job),
+            matchReasons: result.reasons
+          }))
+        });
+      }
 
       for (const result of filteredJobs) {
         const fingerprint = buildJobFingerprint(result.job);
@@ -138,6 +194,7 @@ export async function runCareerScout(options: RunOptions): Promise<void> {
       logger.error("company_run_failed", {
         companyId: company.id,
         parser: company.parser,
+        careersUrl: company.careersUrl,
         message: error instanceof Error ? error.message : "Unknown company failure"
       });
     }

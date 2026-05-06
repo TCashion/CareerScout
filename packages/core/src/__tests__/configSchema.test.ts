@@ -12,6 +12,10 @@ describe("companyConfigFileSchema", () => {
           careersUrl: "https://example.com/careers",
           parser: "greenhouse",
           enabled: true,
+          skipLocationFilter: true,
+          sourceMetadata: {
+            greenhouseBoardToken: "onxmaps"
+          },
           includeKeywords: ["software engineer"],
           excludeTerms: ["junior"],
           allowedLocations: ["remote"]
@@ -20,6 +24,8 @@ describe("companyConfigFileSchema", () => {
     });
 
     expect(parsed.companies).toHaveLength(1);
+    expect(parsed.companies[0]?.skipLocationFilter).toBe(true);
+    expect(parsed.companies[0]?.sourceMetadata?.greenhouseBoardToken).toBe("onxmaps");
   });
 
   it("rejects invalid parser names", () => {

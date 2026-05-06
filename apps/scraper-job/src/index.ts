@@ -11,7 +11,9 @@ async function main(): Promise<void> {
 
   await runCareerScout({
     configPath: resolve(configPath),
-    dryRun: process.env.DRY_RUN === "true"
+    dryRun: process.env.DRY_RUN === "true",
+    logParsedJobs: process.env.LOG_PARSED_JOBS === "true",
+    logMatchedJobs: process.env.LOG_MATCHED_JOBS === "true"
   });
 }
 

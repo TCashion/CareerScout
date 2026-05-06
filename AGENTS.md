@@ -426,6 +426,7 @@ Before considering a task complete, run:
 
 - npm test
 - npm run typecheck
+- npm run lint
 
 If those commands are not yet available, add them.
 

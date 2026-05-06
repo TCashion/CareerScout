@@ -31,6 +31,38 @@ companies:
       - denver
       - boulder
       - colorado
+  - id: onx
+    name: onX
+    careersUrl: "https://www.onxmaps.com/join-our-team"
+    parser: "greenhouse"
+    enabled: false
+    skipLocationFilter: true
+    sourceMetadata:
+      greenhouseBoardToken: "onxmaps"
+    includeKeywords:
+      - software engineer
+      - backend engineer
+      - platform engineer
+      - site reliability engineer
+      - sre
+      - engineering
+    excludeTerms:
+      - junior
+      - associate
+      - entry level
+      - new grad
+      - intern
+      - staff
+      - principal
+      - distinguished
+      - manager
+      - director
+      - vp
+    allowedLocations:
+      - remote
+      - denver
+      - boulder
+      - colorado
   - id: example-lever
     name: Example Lever Co
     careersUrl: "https://jobs.lever.co/example"

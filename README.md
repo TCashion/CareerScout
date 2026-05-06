@@ -56,6 +56,18 @@ npm start
 
 Dry run output logs structured JSON summaries and prints matching jobs instead of sending an email.
 
+To inspect raw parsed jobs separately from matched jobs during a local run, enable one or both debug flags:
+
+```bash
+CAREERSCOUT_CONFIG_PATH=./configs/onx.example.yaml \
+DRY_RUN=true \
+LOG_PARSED_JOBS=true \
+LOG_MATCHED_JOBS=true \
+npm start
+```
+
+`parsed_jobs` contains every job discovered by the parser. `matched_jobs` contains only jobs that passed the title and location filters.
+
 ## Config Example
 
 ```yaml
@@ -65,6 +77,7 @@ companies:
     careersUrl: "https://example.com/careers"
     parser: "genericHtml"
     enabled: true
+    skipLocationFilter: false
     includeKeywords:
       - software engineer
       - backend engineer
@@ -75,6 +88,44 @@ companies:
       - principal
       - staff
       - manager
+    allowedLocations:
+      - remote
+      - denver
+      - boulder
+      - colorado
+```
+
+For companies like onX where the public careers page points to a Greenhouse board and location filtering should be bypassed, use `sourceMetadata.greenhouseBoardToken` plus `skipLocationFilter: true`:
+
+```yaml
+companies:
+  - id: onx
+    name: onX
+    careersUrl: "https://www.onxmaps.com/join-our-team"
+    parser: "greenhouse"
+    enabled: true
+    skipLocationFilter: true
+    sourceMetadata:
+      greenhouseBoardToken: "onxmaps"
+    includeKeywords:
+      - software engineer
+      - backend engineer
+      - platform engineer
+      - site reliability engineer
+      - sre
+      - engineering
+    excludeTerms:
+      - junior
+      - associate
+      - entry level
+      - new grad
+      - intern
+      - staff
+      - principal
+      - distinguished
+      - manager
+      - director
+      - vp
     allowedLocations:
       - remote
       - denver
@@ -111,3 +162,4 @@ The `infra/terraform` directory currently contains placeholders only. A later ta
 
 - `npm test`
 - `npm run typecheck`
+- `npm run lint`

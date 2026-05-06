@@ -17,7 +17,9 @@ function matchesLocation(location: string, allowedLocations: string[]): string[]
 
 export function evaluateJobPosting(job: JobPosting, company: CompanyConfig): FilterResult | null {
   const normalizedTitle = normalizeText(job.title);
-  const locationMatches = matchesLocation(job.location, company.allowedLocations);
+  const locationMatches = company.skipLocationFilter
+    ? ["location filter skipped"]
+    : matchesLocation(job.location, company.allowedLocations);
   const includeMatches = includesAny(normalizedTitle, company.includeKeywords);
   const excludeMatches = includesAny(normalizedTitle, company.excludeTerms);
 
@@ -37,7 +39,9 @@ export function evaluateJobPosting(job: JobPosting, company: CompanyConfig): Fil
     job,
     reasons: [
       `matched title keyword(s): ${includeMatches.join(", ")}`,
-      `matched location(s): ${locationMatches.join(", ")}`
+      company.skipLocationFilter
+        ? "matched location(s): skipped by company configuration"
+        : `matched location(s): ${locationMatches.join(", ")}`
     ]
   };
 }

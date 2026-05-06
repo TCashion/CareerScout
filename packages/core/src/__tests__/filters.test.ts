@@ -68,4 +68,33 @@ describe("evaluateJobPosting", () => {
       evaluateJobPosting(makeJob({ location: "New York, NY" }), company)
     ).toBeNull();
   });
+
+  it("skips location filtering when configured", () => {
+    const companyWithSkippedLocationFilter = companyConfigSchema.parse({
+      ...company,
+      skipLocationFilter: true
+    });
+
+    const result = evaluateJobPosting(
+      makeJob({ title: "Senior Backend Engineer", location: "Bozeman, MT" }),
+      companyWithSkippedLocationFilter
+    );
+
+    expect(result).not.toBeNull();
+    expect(result?.reasons[1]).toContain("skipped by company configuration");
+  });
+
+  it("still excludes staff titles when location filtering is skipped", () => {
+    const companyWithSkippedLocationFilter = companyConfigSchema.parse({
+      ...company,
+      skipLocationFilter: true
+    });
+
+    expect(
+      evaluateJobPosting(
+        makeJob({ title: "Staff Software Engineer - AI", location: "Bozeman, MT" }),
+        companyWithSkippedLocationFilter
+      )
+    ).toBeNull();
+  });
 });
