@@ -1,0 +1,12 @@
+{
+  "name": "@careerscout/scraper-job",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@careerscout/core": "file:../../packages/core",
+    "@careerscout/firestore-store": "file:../../packages/firestore-store",
+    "@careerscout/notifier": "file:../../packages/notifier",
+    "yaml": "^2.8.1"
+  }
+}
