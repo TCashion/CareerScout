@@ -72,7 +72,7 @@ Expected structure:
   .gitignore
   .env.example
   configs/
-    companies.example.yaml
+    companies.yaml
   apps/
     scraper-job/
       package.json
