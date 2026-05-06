@@ -11,14 +11,19 @@
     "node": ">=20"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.base.json --noEmit",
     "start": "tsx apps/scraper-job/src/index.ts"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.9.1",
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.59.2",
     "vitest": "^4.0.7"
   }
 }

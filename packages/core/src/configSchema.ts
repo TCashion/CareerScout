@@ -3,6 +3,11 @@ import { z } from "zod";
 export const parserTypeSchema = z.enum(["greenhouse", "lever", "genericHtml"]);
 
 const nonEmptyStringArraySchema = z.array(z.string().trim().min(1)).min(1);
+const sourceMetadataSchema = z
+  .object({
+    greenhouseBoardToken: z.string().trim().min(1).optional()
+  })
+  .catchall(z.unknown());
 
 export const companyConfigSchema = z.object({
   id: z.string().trim().min(1),
@@ -10,10 +15,11 @@ export const companyConfigSchema = z.object({
   careersUrl: z.string().trim().url(),
   parser: parserTypeSchema,
   enabled: z.boolean().default(true),
+  skipLocationFilter: z.boolean().default(false),
   includeKeywords: nonEmptyStringArraySchema,
   excludeTerms: nonEmptyStringArraySchema,
   allowedLocations: nonEmptyStringArraySchema,
-  metadata: z.record(z.string(), z.unknown()).optional()
+  sourceMetadata: sourceMetadataSchema.optional()
 });
 
 export const companyConfigFileSchema = z.object({

@@ -42,19 +42,31 @@ The MVP uses static fetching and Cheerio-based parsing. It avoids Playwright, AI
 1. Use Node.js 20 or newer.
 2. Run `npm install`.
 3. Copy values from `.env.example` into your local environment as needed. Do not commit `.env`.
-4. Update `configs/companies.example.yaml` or create your own config file.
+4. Update `configs/companies.yaml` as needed for the companies you want to monitor.
 
 ## Dry Run
 
 Dry run mode does not require Firestore or SendGrid credentials.
 
 ```bash
-CAREERSCOUT_CONFIG_PATH=./configs/companies.example.yaml \
+CAREERSCOUT_CONFIG_PATH=./configs/companies.yaml \
 DRY_RUN=true \
-npm start
+npm start | jq -R 'fromjson?'
 ```
 
 Dry run output logs structured JSON summaries and prints matching jobs instead of sending an email.
+
+To inspect raw parsed jobs separately from matched jobs during a local run, enable one or both debug flags:
+
+```bash
+CAREERSCOUT_CONFIG_PATH=./configs/companies.yaml \
+DRY_RUN=true \
+LOG_PARSED_JOBS=true \
+LOG_MATCHED_JOBS=true \
+npm start | jq -R 'fromjson?'
+```
+
+`parsed_jobs` contains every job discovered by the parser. `matched_jobs` contains only jobs that passed the title and location filters.
 
 ## Config Example
 
@@ -65,6 +77,7 @@ companies:
     careersUrl: "https://example.com/careers"
     parser: "genericHtml"
     enabled: true
+    skipLocationFilter: false
     includeKeywords:
       - software engineer
       - backend engineer
@@ -111,3 +124,4 @@ The `infra/terraform` directory currently contains placeholders only. A later ta
 
 - `npm test`
 - `npm run typecheck`
+- `npm run lint`
