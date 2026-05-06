@@ -1,0 +1,14 @@
+{
+  "name": "@careerscout/firestore-store",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./seenJobsStore": "./src/seenJobsStore.ts"
+  },
+  "dependencies": {
+    "@careerscout/core": "file:../core",
+    "@google-cloud/firestore": "^8.0.0"
+  }
+}
