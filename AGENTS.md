@@ -472,7 +472,9 @@ GCP project creation, billing setup, and initial secret creation may be document
 
 Keep commits logical.
 
-Commits should only go to feature branches, never, ever to the `main` branch. New branch names should be prefixed with `tc/<>`, such as `tc/new-feature`
+Commits should only go to feature branches, never, ever to the `main` branch. New branch names should be prefixed with `tc/<>`, such as `tc/new-feature`. 
+
+Commits should have a concise but thorough description of the changes to be included. 
 
 Do not commit:
 
