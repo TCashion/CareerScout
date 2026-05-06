@@ -51,7 +51,7 @@ Dry run mode does not require Firestore or SendGrid credentials.
 ```bash
 CAREERSCOUT_CONFIG_PATH=./configs/companies.yaml \
 DRY_RUN=true \
-npm start
+npm start | jq -R 'fromjson?'
 ```
 
 Dry run output logs structured JSON summaries and prints matching jobs instead of sending an email.
@@ -63,7 +63,7 @@ CAREERSCOUT_CONFIG_PATH=./configs/companies.yaml \
 DRY_RUN=true \
 LOG_PARSED_JOBS=true \
 LOG_MATCHED_JOBS=true \
-npm start
+npm start | jq -R 'fromjson?'
 ```
 
 `parsed_jobs` contains every job discovered by the parser. `matched_jobs` contains only jobs that passed the title and location filters.
